@@ -11,12 +11,16 @@ public class Guard : MonoBehaviour
     public float waitTime = .5f, moveSpeed  = 5f, turnSpeed = 6f, viewDistance = 10;
     public Light spotlight;
 
+    public LayerMask layerMask;
+
     Ray ray;
     RaycastHit hitinfo;
     float angleToPlayer;
     Vector3 playerDisplacement;
 
     Transform player;
+    
+    Color originalColor;
 
     
 
@@ -28,9 +32,8 @@ public class Guard : MonoBehaviour
         {
             ray = new Ray(transform.position, playerDisplacement.normalized);
             Debug.DrawLine(transform.position, transform.position + playerDisplacement.normalized * viewDistance, Color.yellow);
-            if(Physics.Raycast(ray, out hitinfo, viewDistance)){ // Account for obstacles
-                print(!hitinfo.transform.CompareTag("Wall"));
-                return !hitinfo.transform.CompareTag("Wall");
+            if(!Physics.Raycast(ray, out hitinfo, viewDistance, layerMask)){ // Account for obstacles
+                return true;
             }
         }
         
@@ -41,7 +44,8 @@ public class Guard : MonoBehaviour
     {
         spotlight = GetComponentInChildren<Light>();
         player = FindObjectOfType<Player>().transform;
-        // StartCoroutine(FollowPath(moveSpeed));
+        originalColor = spotlight.color;
+        StartCoroutine(FollowPath(moveSpeed));
         
     }
 
@@ -52,7 +56,7 @@ public class Guard : MonoBehaviour
     }
 
     void FixedUpdate(){
-        CanSeePlayer();
+        spotlight.color = CanSeePlayer()? Color.red : originalColor;
     }
 
     IEnumerator FollowPath(float moveSpeed){

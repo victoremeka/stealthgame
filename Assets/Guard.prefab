@@ -125,6 +125,11 @@ MonoBehaviour:
   waitTime: 0.5
   moveSpeed: 5
   turnSpeed: 6
+  viewDistance: 10
+  spotlight: {fileID: 0}
+  layerMask:
+    serializedVersion: 2
+    m_Bits: 8
 --- !u!1 &6176396207408777368
 GameObject:
   m_ObjectHideFlags: 0
@@ -169,7 +174,7 @@ Light:
   serializedVersion: 10
   m_Type: 0
   m_Shape: 0
-  m_Color: {r: 1, g: 0.8780353, b: 0.48113203, a: 1}
+  m_Color: {r: 0.9289497, g: 0.8207547, b: 1, a: 1}
   m_Intensity: 1000
   m_Range: 10
   m_SpotAngle: 60
