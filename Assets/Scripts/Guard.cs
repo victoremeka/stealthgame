@@ -9,7 +9,7 @@ public class Guard : MonoBehaviour
 {
     public Transform path;
     public float waitTime = .5f, moveSpeed  = 5f, turnSpeed = 6f, viewDistance = 10;
-    public Light spotlight;
+    Light spotlight;
 
     public LayerMask layerMask;
 
@@ -64,20 +64,23 @@ public class Guard : MonoBehaviour
         Vector3 destination = path.GetChild(index).position;
 
         yield return StartCoroutine(LookTowards(destination));
+        
 
         while(true)
         {
 
-            if (transform.position.x != destination.x && transform.position.z != destination.z)
+            if (transform.position.x != destination.x || transform.position.z != destination.z) 
             {
                 transform.position =  Vector3.MoveTowards(transform.position, new Vector3(destination.x, transform.position.y, destination.z), moveSpeed*Time.deltaTime);
                 yield return null;
                 continue;
             }
 
-            index = (index+1) % path.childCount ;
+            index = (index+1) % path.childCount;
+            
             destination = path.GetChild(index).position;
-
+            print(index + " - " + destination);
+            
             
             yield return StartCoroutine(LookTowards(destination));
             yield return new WaitForSeconds(waitTime);
