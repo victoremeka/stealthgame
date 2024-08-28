@@ -8,19 +8,14 @@ using Unity.Mathematics;
 public class Guard : MonoBehaviour
 {
     public Transform path;
-    public float waitTime = .5f, moveSpeed  = 5f, turnSpeed = 6f, viewDistance = 10;
+    public float waitTime = .5f, moveSpeed = 5f, turnSpeed = 6f, viewDistance = 10, angleToPlayer;
     Light spotlight;
-
     public LayerMask layerMask;
-
     Ray ray;
-    RaycastHit hitinfo;
-    float angleToPlayer;
     Vector3 playerDisplacement;
-
     Transform player;
-    
     Color originalColor;
+    public event Action FoundPlayer;
 
     
 
@@ -32,7 +27,7 @@ public class Guard : MonoBehaviour
         {
             ray = new Ray(transform.position, playerDisplacement.normalized);
             Debug.DrawLine(transform.position, transform.position + playerDisplacement.normalized * viewDistance, Color.yellow);
-            if(!Physics.Raycast(ray, out hitinfo, viewDistance, layerMask)){ // Account for obstacles
+            if(!Physics.Raycast(ray, viewDistance, layerMask)){ // Account for obstacles
                 return true;
             }
         }
@@ -46,18 +41,30 @@ public class Guard : MonoBehaviour
         player = FindObjectOfType<Player>().transform;
         originalColor = spotlight.color;
         StartCoroutine(FollowPath(moveSpeed));
-        
+        StartCoroutine(LightStatus());
     }
 
     void Update()
     {
-        
-        
+         
     }
 
-    void FixedUpdate(){
-        spotlight.color = CanSeePlayer()? Color.red : originalColor;
+    IEnumerator LightStatus(){
+        while (true){
+            if (CanSeePlayer())
+            {
+                spotlight.color = Color.red;
+                yield return new WaitForSeconds(.3f);
+                FoundPlayer?.Invoke();
+            } else
+            {
+                spotlight.color = originalColor;
+            }
+            
+            yield return null;
+        }
     }
+        
 
     IEnumerator FollowPath(float moveSpeed){
         int index = 0;
@@ -79,8 +86,6 @@ public class Guard : MonoBehaviour
             index = (index+1) % path.childCount;
             
             destination = path.GetChild(index).position;
-            print(index + " - " + destination);
-            
             
             yield return StartCoroutine(LookTowards(destination));
             yield return new WaitForSeconds(waitTime);
