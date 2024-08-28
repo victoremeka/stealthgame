@@ -8,8 +8,14 @@ public class Manager : MonoBehaviour
     Guard[] guards;
     public GameObject gameOverScreen, player;
     public TextMeshProUGUI gameOverText;
-
     Vector3 originalPosition;
+    int index;
+    string[] convo = {
+        "what are you?",
+        "you try again, why?",
+        "existence is futile, humanity is but a fragment of memories. there is no point, no meaning.",
+        "would you like a chocolate chip?"
+    };
 
 
     void Awake(){
@@ -22,6 +28,8 @@ public class Manager : MonoBehaviour
 
     void Start(){
         originalPosition = player.transform.position;
+        index = 0;
+        
     }
 
     void Update(){
@@ -29,11 +37,13 @@ public class Manager : MonoBehaviour
     }
 
     void ResetGame(){
+        index = index % convo.Length;
         gameOverScreen.SetActive(true);
         StopAllCoroutines();
         gameOverText.text = null;
-        StartCoroutine(AnimateText("what are you?"));
+        StartCoroutine(AnimateText(convo[index]));
         player.transform.position = originalPosition;
+        index++;
     }
 
     IEnumerator AnimateText(string text){
@@ -41,7 +51,7 @@ public class Manager : MonoBehaviour
         foreach (char letter in text)
         {
             gameOverText.text += letter;
-            yield return new WaitForSeconds(.2f);
+            yield return new WaitForSeconds(.15f);
         }
         yield return new WaitForSeconds(3f);
         gameOverText.text = null;
