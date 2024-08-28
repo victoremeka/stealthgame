@@ -41,9 +41,10 @@ public class Manager : MonoBehaviour
         foreach (char letter in text)
         {
             gameOverText.text += letter;
-            yield return new WaitForSeconds(.3f);
+            yield return new WaitForSeconds(.2f);
         }
-        yield return new WaitForSeconds(2);
+        yield return new WaitForSeconds(3f);
+        gameOverText.text = null;
     }
 
 

@@ -6,18 +6,11 @@ using UnityEngine;
 public class CameraFollow : MonoBehaviour
 {
     public GameObject player;
-    Camera mainCamera;
-    float cameraHeight;
-    Ray ray;
-    RaycastHit hitinfo;
-    
-    void Start()
-    {
-        mainCamera = FindObjectOfType<Camera>();
-        print(mainCamera.rect);
-    }
+    public float threshold = 3f, moveSpeed = .5f, smoothMoveSpeed = .3f, smoothTime = .1f;
+    float velocity;
     void Update()
     {
-        Physics.Raycast(mainCamera.ScreenPointToRay(player.transform.position), out hitinfo);
+        moveSpeed = Mathf.SmoothDamp(smoothMoveSpeed, moveSpeed, ref velocity, smoothTime);
+        transform.position = new Vector3(transform.position.x, transform.position.y, Mathf.MoveTowards(transform.position.z, player.transform.position.z, moveSpeed));
     }
 }
