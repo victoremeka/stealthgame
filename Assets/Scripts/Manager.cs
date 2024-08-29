@@ -11,7 +11,6 @@ public class Manager : MonoBehaviour
     int index;
     string[] convo = {
         "what are you?",
-        "you try again, why?",
         "there is no point, no meaning.",
         "would you care for a chocolate chip?"
     };
