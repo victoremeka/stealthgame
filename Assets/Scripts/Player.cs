@@ -1,5 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
+using System;
 using UnityEngine;
 
 public class Player : MonoBehaviour
@@ -8,8 +7,8 @@ public class Player : MonoBehaviour
     public Vector3 velocity;
     Rigidbody playerRigidbody;
     float smoothInputMagnitude, smoothMoveVelocity, smoothMoveTime = .1f;
-
     float targetAngle, angle;
+    public event Action ReachedDestination;
 
     void Start(){
         playerRigidbody = GetComponent<Rigidbody> ();
@@ -29,6 +28,12 @@ public class Player : MonoBehaviour
     void FixedUpdate(){
         playerRigidbody.MoveRotation(Quaternion.Euler(Vector3.up * angle));
         playerRigidbody.MovePosition(playerRigidbody.position + velocity * Time.deltaTime);
+    }
+
+    void OnTriggerEnter(Collider obj){
+        if (obj.CompareTag("Goal")){
+            ReachedDestination?.Invoke();
+        }
     }
 
     

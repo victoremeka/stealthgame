@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using TMPro;
 using UnityEngine;
@@ -13,13 +12,15 @@ public class Manager : MonoBehaviour
     string[] convo = {
         "what are you?",
         "you try again, why?",
-        "existence is futile, humanity is but a fragment of memories. there is no point, no meaning.",
-        "would you like a chocolate chip?"
+        "there is no point, no meaning.",
+        "would you care for a chocolate chip?"
     };
-
+    public GameObject levelCompleteScreen;
+    public TextMeshProUGUI levelCompleteText;
 
     void Awake(){
         guards = FindObjectsOfType<Guard>();
+        player.GetComponent<Player>().ReachedDestination += LevelComplete;
         foreach (Guard guard in guards)
         {
             guard.FoundPlayer += ResetGame;
@@ -29,32 +30,34 @@ public class Manager : MonoBehaviour
     void Start(){
         originalPosition = player.transform.position;
         index = 0;
-        
     }
 
-    void Update(){
-
+    void LevelComplete(){
+        levelCompleteScreen.SetActive(true);
+        levelCompleteText.text = null;
+        StopAllCoroutines();
+        StartCoroutine(AnimateText("keep moving.", levelCompleteText));
     }
 
     void ResetGame(){
-        index = index % convo.Length;
+        index %= convo.Length;
         gameOverScreen.SetActive(true);
         StopAllCoroutines();
         gameOverText.text = null;
-        StartCoroutine(AnimateText(convo[index]));
+        StartCoroutine(AnimateText(convo[index], gameOverText));
         player.transform.position = originalPosition;
         index++;
     }
 
-    IEnumerator AnimateText(string text){
+    IEnumerator AnimateText(string text, TextMeshProUGUI target){
         yield return new WaitForSeconds(1.5f);
         foreach (char letter in text)
         {
-            gameOverText.text += letter;
-            yield return new WaitForSeconds(.15f);
+            target.text += letter;
+            yield return new WaitForSeconds(.12f);
         }
         yield return new WaitForSeconds(3f);
-        gameOverText.text = null;
+        target.text = null;
     }
 
 
